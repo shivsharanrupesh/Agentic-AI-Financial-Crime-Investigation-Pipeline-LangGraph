@@ -124,7 +124,7 @@ A well-written case summary that can be immediately reviewed by compliance teams
   - Ensures type safety across the pipeline
 
 ### API & Data Layer
-- **`api_clients.py`**  
+- **`real_clients.py`**  
   - Implements:
     - Oracle DB connection pooling
     - Transaction/KYC document retrieval
@@ -142,11 +142,6 @@ A well-written case summary that can be immediately reviewed by compliance teams
 | **`escalate_agent.py`** | Exception Handling | Routes failures to manual review |
 
 ## ⚙️ System Components
-
-- **`orchestrator.py`**  
-  - Pipeline coordination engine
-  - Manages agent workflow
-  - Implements error handling
 
 - **`monitoring.py`**  
   - Prometheus integration for:
