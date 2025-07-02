@@ -1,8 +1,10 @@
 import logging
 import os
+import pandas as pd
 from langgraph.graph import StateGraph
 from config import CONFIG
 from real_clients import OracleClient, MLModel, OpenAIClient
+from monitor import setup_logging, start_metrics_server, transactions_processed, transactions_flagged, pipeline_latency
 
 from agents.rule_agent import RuleAgent
 from agents.data_fetcher import DataFetcherAgent
@@ -40,11 +42,12 @@ def build_workflow(oracle_client, ml_model, llm_client):
     workflow.add_edge("escalate_agent", "END")
 
     workflow.set_entry("rule_agent")
-
     return workflow
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    setup_logging()
+    start_metrics_server(port=8000)
+
     oracle_client = OracleClient(
         host=os.environ.get("ORACLE_HOST"),
         port=os.environ.get("ORACLE_PORT"),
@@ -55,7 +58,15 @@ if __name__ == "__main__":
     ml_model = MLModel(model_path="model.joblib")
     llm_client = OpenAIClient(api_key=os.environ.get("OPENAI_API_KEY"))
     workflow = build_workflow(oracle_client, ml_model, llm_client)
-    txn = {"id": "TXN001", "customer_id": "CUST001", "amount": 15000, "country": "CountryA"}
-    context = {"txn": txn}
-    result = workflow.run(context)
-    print("Final result:", result)
+
+    # Updated path to CSV inside the test_data folder
+    df = pd.read_csv("test_data/transactions.csv")
+    for _, row in df.iterrows():
+        txn = row.to_dict()
+        context = {"txn": txn}
+        with pipeline_latency.time():
+            result = workflow.run(context)
+        transactions_processed.inc()
+        if result.get("flagged"):
+            transactions_flagged.inc()
+        print("Final result:", result)
