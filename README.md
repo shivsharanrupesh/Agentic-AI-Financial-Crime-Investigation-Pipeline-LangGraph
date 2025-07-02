@@ -173,6 +173,89 @@ For each agent, you:
 | “What’s my average end-to-end processing time?” | `pipeline_latency` histogram |
 
 
+
+# Evaluating the Performance of AI Agents in This Project
+
+## 1. Technical Performance Metrics (from Monitoring)
+**Source:** Prometheus agent-level metrics  
+
+| Metric            | Description                                                                 | Goal                                                                 |
+|-------------------|-----------------------------------------------------------------------------|----------------------------------------------------------------------|
+| **Latency**       | Processing time per agent (RuleAgent, DataFetcher, MLScorer, Summarizer)    | Detect bottlenecks and optimize infrastructure                      |
+| **Error Rate**    | Failures per agent (DB errors, ML/LLM API failures)                         | Identify stability/reliability issues                                |
+| **Throughput**    | Transactions processed per hour/day                                         | Measure system capacity                                             |
+| **Resource Utilization** | Memory/CPU for heavy agents (ML, LLM)                                | Optimize infrastructure costs                                       |
+
+---
+
+## 2. Functional & Business Performance Metrics
+
+### A. **Rule Agent**
+- **Metric:** Precision/Recall/F1-score on labeled data  
+- **Goal:** Balance true suspicious flags vs. false positives  
+
+### B. **DataFetcher Agent**
+- **Metric:**  
+  - KYC doc retrieval success rate (%)  
+  - Missing-docs count  
+- **Goal:** Ensure complete data for decision-making  
+
+### C. **ML Scorer Agent**
+- **Metrics:**  
+  - AUC-ROC, accuracy, precision/recall (validation/test data)  
+  - Distribution of risk scores  
+- **Goal:** Validate model performance and calibration  
+
+### D. **Summarizer Agent (LLM)**
+- **Metrics:**  
+  - Human review scores (clarity, accuracy)  
+  - Automated readability checks  
+  - Regulatory field inclusion rate  
+- **Goal:** Ensure audit-ready, actionable summaries  
+
+### E. **Case Manager Agent**
+- **Metric:** % auto-closed vs. escalated cases  
+- **Goal:** Maximize automation safely  
+
+---
+
+## 3. End-to-End System Metrics
+| Metric                          | Purpose                                                                 |
+|----------------------------------|-------------------------------------------------------------------------|
+| Reduction in Manual Reviews (%)  | Measure automation impact                                              |
+| False Positive Rate              | Track alert quality post-tuning                                        |
+| Average Case Resolution Time     | Compare pre-/post-automation efficiency                                |
+| Regulatory Audit Pass Rate       | Ensure compliance post-implementation                                  |
+
+---
+
+## 4. How to Measure These in Practice
+- **Real-time:** Prometheus/Grafana for operational metrics (latency, errors)  
+- **Periodic:**  
+  - Business reports (aggregated logs + human reviews)  
+  - Offline model evaluation (ML/LLM test sets)  
+  - User feedback loops (summary quality, false positives)  
+
+### Example Evaluation Report
+| Agent        | Success Rate | Avg Latency | Error Rate | F1 Score (ML) | User Score (LLM) | Auto-Close % | Escalate % |
+|--------------|--------------|-------------|------------|---------------|------------------|--------------|------------|
+| RuleAgent    | 100%         | 20ms        | 0%         | n/a           | n/a              | n/a          | n/a        |
+| DataFetcher  | 99.2%        | 100ms       | 0.8%       | n/a           | n/a              | n/a          | n/a        |
+| MLScorer     | 100%         | 25ms        | 0%         | 0.85          | n/a              | n/a          | n/a        |
+| Summarizer   | 98.5%        | 250ms       | 1.5%       | n/a           | 4.8/5            | n/a          | n/a        |
+| CaseManager  | 100%         | 10ms        | 0%         | n/a           | n/a              | 68%          | 32%        |
+
+---
+
+## Summary
+**Evaluation combines:**  
+✅ **Technical health** (monitoring dashboards)  
+✅ **Functional accuracy** (ML/LLM metrics)  
+✅ **Business outcomes** (review reduction, compliance)  
+
+
+
+
 ## ⚙️ Setup & Installation
 
 ### 1. Clone the Repo
