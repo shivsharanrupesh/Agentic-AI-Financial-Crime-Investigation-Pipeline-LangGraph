@@ -48,15 +48,13 @@ This system enables banks and financial institutions to detect, investigate, and
 
 │   └── transactions.csv
 
-├── api_clients.py
+├── real_clients.py
 
 ├── config.py
 
 ├── main.py
 
-├── monitoring.py
-
-├── orchestrator.py
+├── monitor.py
 
 ├── requirements.txt
 
